@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover</title>
+</head>
+<body>
+    <h1>Background Remover</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        Фото
+        <input type="file" id="image-input" accept="image/*" required>
+        Фон
+        <input type="file" id="background-input" accept="image/*" required>
+        <button type="button" id="start-button">Start</button>
+    </form>
+
+    <div id="result-container" style="display: none;">
+        <h2>Result:</h2>
+        <img id="result-image">
+        <a id="download-link" download="processed_image.png"><button type="button">Download</button></a>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            var formData = new FormData();
+            formData.append('image', document.getElementById('image-input').files[0]);
+            formData.append('background', document.getElementById('background-input').files[0]);
+
+            fetch('/process_image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                document.getElementById('result-container').style.display = 'block';
+                document.getElementById('result-image').src = URL.createObjectURL(blob);
+                document.getElementById('download-link').href = URL.createObjectURL(blob);
+            });
+        });
+    </script>
+</body>
+</html>
